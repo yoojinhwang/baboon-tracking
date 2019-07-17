@@ -17,10 +17,12 @@ def remove_noise(foreground_mask):
     '''
     erosion_kernel = np.ones(EROSION_KERNEL, np.uint8)
     dilation_kernel = np.ones(DILATION_KERNEL, np.uint8)
+    gaussian_kernel = np.ones(GAUSSIAN_KERNEL, np.uint8)
 
     foreground_mask = cv2.erode(foreground_mask, erosion_kernel, iterations = EROSION_ITERATIONS)
     foreground_mask = cv2.dilate(foreground_mask, dilation_kernel, iterations = DILATION_ITERATIONS)
-
+    # Adding a Gaussian Blur
+    foreground_mask = cv2.GaussianBlur(foreground_mask, (3,3), 0)
     return foreground_mask
 
 def detect_blobs(foreground_mask, rgb_frame):

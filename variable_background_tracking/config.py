@@ -30,6 +30,7 @@ EROSION_ITERATIONS = 1
 DILATION_KERNEL = (5, 5)
 DILATION_ITERATIONS = 5
 
+GAUSSIAN_KERNEL = (3,3)
 # params for blob detector
 BLOB_DET_PARAMS = cv2.SimpleBlobDetector_Params()
 

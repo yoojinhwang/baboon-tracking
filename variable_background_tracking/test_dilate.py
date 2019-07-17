@@ -51,8 +51,10 @@ def main():
             cv2.imshow('detected_blobs', cv2.resize(frame_with_detected_blobs, (DISPLAY_WIDTH, DISPLAY_HEIGHT)))
             #display the frame that keypoints are being found from as well as keypoints detected
             cv2.imshow('detected_blobs_mask', cv2.resize(mask_blobs, (DISPLAY_WIDTH, DISPLAY_HEIGHT)))
-            
-            #out.write(cv2.cvtColor(moving_foreground, cv2.COLOR_GRAY2BGR))
+
+            #making sure that the frame is the right size
+            frame_with_detected_blobs = cv2.resize(frame_with_detected_blobs, (DISPLAY_WIDTH, DISPLAY_HEIGHT))
+            #out.write(cv2.cvtColor(frame_with_detected_blobs, cv2.COLOR_RGB2BGR))
 
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
