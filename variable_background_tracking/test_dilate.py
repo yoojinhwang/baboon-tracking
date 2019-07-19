@@ -27,7 +27,7 @@ def main():
 
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
-    out = cv2.VideoWriter(OUTPUT_MASK_BLOB_DETECTION, cv2.VideoWriter_fourcc(*'mp4v'), 20.0, (DISPLAY_WIDTH, DISPLAY_HEIGHT))
+    out = cv2.VideoWriter(OUTPUT_MASK_BLOB_DETECTION, cv2.VideoWriter_fourcc('M','J','P','G'), 20.0, (DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
     cpus = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=cpus)
@@ -43,7 +43,7 @@ def main():
             moving_foreground = gray
 
             moving_foreground = remove_noise(moving_foreground)
-            frame_with_detected_blobs, mask_blobs = detect_blobs(moving_foreground, frame)
+            frame_with_detected_blobs, mask_blobs, origin = detect_blobs_LoG(moving_foreground, frame)
 
             # Display the resulting frame
 
@@ -54,7 +54,7 @@ def main():
 
             #making sure that the frame is the right size
             frame_with_detected_blobs = cv2.resize(frame_with_detected_blobs, (DISPLAY_WIDTH, DISPLAY_HEIGHT))
-            #out.write(cv2.cvtColor(frame_with_detected_blobs, cv2.COLOR_RGB2BGR))
+            out.write(cv2.cvtColor(frame_with_detected_blobs, cv2.COLOR_RGB2BGR))
 
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
