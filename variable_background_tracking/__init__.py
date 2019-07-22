@@ -101,7 +101,7 @@ def main():
             frame_new = zero_weights(gray, weights)
             union_new = zero_weights(union, weights)
 
-            foreground = np.absolute(frame_new.astype(np.int32) - union_new.astype(np.int32)).astype(np.uint8)
+            foreground = np.absolute(frame_new - union_new)
 
             moving_foreground = get_moving_foreground(weights, foreground, history_of_dissimilarity)
 
