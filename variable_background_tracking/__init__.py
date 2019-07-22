@@ -15,7 +15,7 @@ from config import *
 def main():
     # Create a VideoCapture object and read from input file
     # If the input is the camera, pass 0 instead of the video file name
-    cap = cv2.VideoCapture(INPUT_VIDEO)
+    cap = cv2.VideoCapture("small.MP4")
 
     # Check if camera opened successfully
     if (cap.isOpened()== False):
@@ -30,9 +30,12 @@ def main():
     pool = multiprocessing.Pool(processes=cpus)
 
     start = time.clock()
+    count = 1
+    intersects = []
     # Read until video is completed
     while(cap.isOpened()):
         # Capture frame-by-frame
+        
         ret, frame = cap.read()
         if ret == True:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -60,11 +63,36 @@ def main():
             grouped_quantized_frames = [(quantized_frames[g[0]], quantized_frames[g[1]]) for g in frame_group_index]
 
             # choose to use new or old intersects function
-            if(ACTIVE_INTERSECT == 1):
-                intersect_frames = intersect_frames_old
+            #if(ACTIVE_INTERSECT == 1):
+            #    intersect_frames = intersect_frames_old
+            
+            if count == 1:
+                odd = [intersect_frames(z[0], z[1]) for z in zip(grouped_shifted_history_frames, grouped_quantized_frames)]
+                union = union_frames(odd)
+            elif count == 2:
+                even = [intersect_frames(z[0], z[1]) for z in zip(grouped_shifted_history_frames, grouped_quantized_frames)]
+                union = union_frames(even)
+            elif (count % 2 == 1):
+                for i in range(4):
+                    intersects.append(odd[i + 1])
+                intersects.append(intersect_frames(grouped_shifted_history_frames[4], grouped_quantized_frames[4]))
+                odd = intersects
+            elif (count % 2 == 0):
+                for i in range(4):
+                    intersects.append(even[i + 1])
+                intersects.append(intersect_frames(grouped_shifted_history_frames[4], grouped_quantized_frames[4]))
+                even = intersects
+            else:
+                print("error")
+            
+            
+                
+                
 
-            intersects = [intersect_frames(z[0], z[1]) for z in zip(grouped_shifted_history_frames, grouped_quantized_frames)]
-            union = union_frames(intersects)
+
+            #intersects = [intersect_frames(z[0], z[1]) for z in zip(grouped_shifted_history_frames, grouped_quantized_frames)]
+            
+            #union = union_frames(intersects)
 
             history_of_dissimilarity = get_history_of_dissimilarity(shifted_history_frames, quantized_frames)
 
@@ -90,7 +118,7 @@ def main():
             curr_time = time.clock() - start
 
             print('curr_time: ' + str(curr_time))
-
+            count+=1
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q') or curr_time > 5 * 60 * 60:
                 break
