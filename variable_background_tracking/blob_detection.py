@@ -24,12 +24,12 @@ def remove_noise(foreground_mask):
     open_kernel =  np.ones((2,2),np.uint8)
     close_kernel =  np.ones((5,5),np.uint8)
 
-    #foreground_mask = cv2.erode(foreground_mask, erosion_kernel, iterations = EROSION_ITERATIONS)
-    #foreground_mask = cv2.dilate(foreground_mask, dilation_kernel, iterations = DILATION_ITERATIONS)
+    foreground_mask = cv2.erode(foreground_mask, erosion_kernel, iterations = EROSION_ITERATIONS)
+    foreground_mask = cv2.dilate(foreground_mask, dilation_kernel, iterations = DILATION_ITERATIONS)
     # Adding a Gaussian Blur
     #foreground_mask = cv2.GaussianBlur(foreground_mask, (3,3), 0)
-    foreground_mask = cv2.morphologyEx(foreground_mask, cv2.MORPH_OPEN,open_kernel)
-    foreground_mask = cv2.morphologyEx(foreground_mask, cv2.MORPH_CLOSE,close_kernel)
+    #foreground_mask = cv2.morphologyEx(foreground_mask, cv2.MORPH_OPEN,open_kernel)
+    #foreground_mask = cv2.morphologyEx(foreground_mask, cv2.MORPH_CLOSE,close_kernel)
     return foreground_mask
 
 def detect_blobs(foreground_mask, rgb_frame, orig_frame=None):
@@ -114,7 +114,12 @@ def detect_blobs_LoG2(foreground_mask, rgb_frame, orig_frame=None, LoGsize=20):
     keypoints = detector.detect(foreground_withblob2)
 
     im_with_keypoints = cv2.drawKeypoints(foreground_withblob2, keypoints,
-                                          np.array([]), (0, 0, 255),
+                                          np.array([]), (255, 0, 0),
                                           cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    #mask_with_blobs = cv2.drawKeypoints(foreground_mask, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
-    return im_with_keypoints
+    orig_with_blobs = None
+    if(orig_frame is not None):
+        orig_with_blobs = cv2.drawKeypoints(orig_frame, keypoints, np.array([]), (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+    return im_with_keypoints, orig_with_blobs

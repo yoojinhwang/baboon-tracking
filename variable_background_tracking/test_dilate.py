@@ -28,7 +28,7 @@ def main():
 
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
-    out = cv2.VideoWriter(OUTPUT_MASK_BLOB_DETECTION, cv2.VideoWriter_fourcc('M','J','P','G'), 20.0, (DISPLAY_WIDTH, DISPLAY_HEIGHT))
+    out = cv2.VideoWriter(OUTPUT_MASK_BLOB_DETECTION, cv2.VideoWriter_fourcc(*'mp4v'), 20.0, (DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
     cpus = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=cpus)
@@ -45,20 +45,21 @@ def main():
 
             moving_foreground = remove_noise(moving_foreground)
             #frame_with_detected_blobs, mask_blobs, origin = detect_blobs_LoG(moving_foreground, frame)
-            moving_foreground = detect_blobs_LoG2(moving_foreground, frame, orig_frame)
+            moving_foreground, orig_blobs = detect_blobs_LoG2(moving_foreground, frame, orig_frame)
             #moving_foreground = do_LoG(moving_foreground)
             # Display the resulting frame
 
             cv2.imshow('moving_foreground', cv2.resize(moving_foreground, (DISPLAY_WIDTH, DISPLAY_HEIGHT)))
+            #cv2.imshow('orig', cv2.resize(orig_blobs, (DISPLAY_WIDTH, DISPLAY_HEIGHT)))
             #cv2.imshow('detected_blobs', cv2.resize(frame_with_detected_blobs, (DISPLAY_WIDTH, DISPLAY_HEIGHT)))
 
             #display the frame that keypoints are being found from as well as keypoints detected
             #cv2.imshow('detected_blobs_mask', cv2.resize(mask_blobs, (DISPLAY_WIDTH, DISPLAY_HEIGHT)))
 
             #making sure that the frame is the right size
-            #frame_with_detected_blobs = cv2.resize(frame_with_detected_blobs, (DISPLAY_WIDTH, DISPLAY_HEIGHT))
-            #out.write(cv2.cvtColor(frame_with_detected_blobs, cv2.COLOR_RGB2BGR))
-
+            moving_foreground = cv2.resize(moving_foreground, (DISPLAY_WIDTH, DISPLAY_HEIGHT))
+            out.write(cv2.cvtColor(moving_foreground, cv2.COLOR_RGB2BGR))
+            print("writing frame...")
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
@@ -70,6 +71,7 @@ def main():
     # When everything done, release the video capture object
     cap.release()
     out.release()
+    print("finished writing")
 
     # Closes all the frames
     cv2.destroyAllWindows()
