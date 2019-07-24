@@ -115,7 +115,7 @@ def detect_blobs_LoG2(foreground_mask, rgb_frame, orig_frame=None, LoGsize=20):
 
     im_with_keypoints = cv2.drawKeypoints(foreground_withblob2, keypoints,
                                           np.array([]), (255, 0, 0),
-                                          cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+                                      cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
     #mask_with_blobs = cv2.drawKeypoints(foreground_mask, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
     orig_with_blobs = None
