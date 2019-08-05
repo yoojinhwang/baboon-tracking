@@ -22,14 +22,14 @@ def remove_noise(foreground_mask):
     dilation_kernel = np.ones(DILATION_KERNEL, np.uint8)
     gaussian_kernel = np.ones(GAUSSIAN_KERNEL, np.uint8)
     open_kernel =  np.ones((2,2),np.uint8)
-    close_kernel =  np.ones((5,5),np.uint8)
+    close_kernel =  np.ones((3,3),np.uint8)
 
-    foreground_mask = cv2.erode(foreground_mask, erosion_kernel, iterations = EROSION_ITERATIONS)
-    foreground_mask = cv2.dilate(foreground_mask, dilation_kernel, iterations = DILATION_ITERATIONS)
+    #foreground_mask = cv2.erode(foreground_mask, erosion_kernel, iterations = EROSION_ITERATIONS)
+    #foreground_mask = cv2.dilate(foreground_mask, dilation_kernel, iterations = 5)
     # Adding a Gaussian Blur
     #foreground_mask = cv2.GaussianBlur(foreground_mask, (3,3), 0)
     #foreground_mask = cv2.morphologyEx(foreground_mask, cv2.MORPH_OPEN,open_kernel)
-    #foreground_mask = cv2.morphologyEx(foreground_mask, cv2.MORPH_CLOSE,close_kernel)
+    foreground_mask = cv2.morphologyEx(foreground_mask, cv2.MORPH_CLOSE,close_kernel, iterations = 3)
     return foreground_mask
 
 def detect_blobs(foreground_mask, rgb_frame, orig_frame=None):
@@ -60,10 +60,7 @@ def detect_blobs(foreground_mask, rgb_frame, orig_frame=None):
         orig_with_blobs = cv2.drawKeypoints(orig_frame, keypoints, np.array([]), (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
     return frame_with_blobs, mask_with_blobs, orig_with_blobs
-def LoGalg1():
-    """
 
-    """
 
 def detect_blobs_LoG(foreground_mask, rgb_frame, orig_frame=None):
     """
@@ -116,10 +113,10 @@ def detect_blobs_LoG2(foreground_mask, rgb_frame, orig_frame=None, LoGsize=20):
     im_with_keypoints = cv2.drawKeypoints(foreground_withblob2, keypoints,
                                           np.array([]), (255, 0, 0),
                                       cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    #mask_with_blobs = cv2.drawKeypoints(foreground_mask, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    mask_with_blobs = cv2.drawKeypoints(rgb_frame, keypoints, np.array([]), (255,0,0), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
     orig_with_blobs = None
     if(orig_frame is not None):
         orig_with_blobs = cv2.drawKeypoints(orig_frame, keypoints, np.array([]), (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
-    return im_with_keypoints, orig_with_blobs
+    return im_with_keypoints, mask_with_blobs, orig_with_blobs, keypoints
