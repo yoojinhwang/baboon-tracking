@@ -33,27 +33,30 @@ def main():
     if (cap_orig.isOpened() == False):
         print("Can't open input.mp4")
         sys.exit()
-    
+
     # Process original video if provided
     if (cap_orig.isOpened() and int(cap_orig.get(3) == frame_width and cap_orig.get(4) == frame_height)):
         using_orig = True
 
     cpus = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=cpus)
-
+    frame_num = 1 #used for setting txt output file name in detect_blobs_LoG2
     start = time.clock()
     # Read until video is completed
     while(cap.isOpened()):
         # Capture frame-by-frame
+
         ret, frame = cap.read()
         orig_ret, orig_frame = cap_orig.read()
+
         if ret == True:
+
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             moving_foreground = gray
 
             moving_foreground = remove_noise(moving_foreground)
             #frame_with_detected_blobs, mask_blobs, origin = detect_blobs_LoG(moving_foreground, frame)
-            moving_foreground, frame_with_detected_blobs, orig_blobs = detect_blobs_LoG2(moving_foreground, frame, orig_frame=orig_frame)
+            moving_foreground, frame_with_detected_blobs, orig_blobs = detect_blobs_LoG2(moving_foreground, frame, orig_frame=orig_frame, pickle=False, frame_number=frame_num)
             #moving_foreground = do_LoG(moving_foreground)
             # Display the resulting frame
 
@@ -74,12 +77,14 @@ def main():
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
+            frame_num += 1 #increasing frame number for txt file name in detect_blobs_LoG2
 
         # Break the loop
         else:
             break
 
     # When everything done, release the video capture object
+
     cap.release()
     out.release()
     print("finished writing")

@@ -13,6 +13,7 @@ from LoG_detection import *
 
 from config import *
 
+import pickle
 def remove_noise(foreground_mask):
     '''
     Uses OpenCV morphological transformations to make blobs more defined
@@ -97,7 +98,7 @@ def detect_blobs_LoG(foreground_mask, rgb_frame, orig_frame=None):
 
     return frame_with_blobs, mask_with_blobs, orig_with_blobs
 
-def detect_blobs_LoG2(foreground_mask, rgb_frame, orig_frame=None, LoGsize=20):
+def detect_blobs_LoG2(foreground_mask, rgb_frame, orig_frame=None, LoGsize=20, pickle=False,frame_number=None):
     """
     LoG algorithm based on GUI_Blob_Tracker github repo
     """
@@ -119,4 +120,19 @@ def detect_blobs_LoG2(foreground_mask, rgb_frame, orig_frame=None, LoGsize=20):
     if(orig_frame is not None):
         orig_with_blobs = cv2.drawKeypoints(orig_frame, keypoints, np.array([]), (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
-    return im_with_keypoints, mask_with_blobs, orig_with_blobs, keypoints
+    #if you decide to save txt files of keypoint information
+    if(pickle==True):
+        index = []
+        #get all the needed information from keypoints
+        for point in keypoints:
+            temp = ["baboon", str(point.response), str(point.pt[0] - (point.size/2)), str(point.pt[1] + (point.size/2)) , str(point.size), str(point.size)]
+            index.append(temp)
+        #set the name of the file that you will be saving to. It is set to one frame per file
+        pickleTXT = "hypotheses_txt/frame"+str(frame_number)+".txt"
+        #write info to file
+        with open(pickleTXT, "a+") as txt_file:
+            for line in index:
+                txt_file.write(" ".join(line) + "\n")
+
+
+    return im_with_keypoints, mask_with_blobs, orig_with_blobs
