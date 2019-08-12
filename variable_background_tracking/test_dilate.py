@@ -56,7 +56,7 @@ def main():
 
             moving_foreground = remove_noise(moving_foreground)
             #frame_with_detected_blobs, mask_blobs, origin = detect_blobs_LoG(moving_foreground, frame)
-            moving_foreground, frame_with_detected_blobs, orig_blobs = detect_blobs_LoG2(moving_foreground, frame, orig_frame=orig_frame, pickle=False, frame_number=frame_num)
+            moving_foreground, frame_with_detected_blobs, orig_blobs = detect_blobs_LoG2(moving_foreground, frame, orig_frame=orig_frame, pickle=True, frame_number=frame_num)
             #moving_foreground = do_LoG(moving_foreground)
             # Display the resulting frame
 
@@ -72,7 +72,7 @@ def main():
 
             #making sure that the frame is the right size
             frame_with_detected_blobs = cv2.resize(frame_with_detected_blobs, (DISPLAY_WIDTH, DISPLAY_HEIGHT))
-            out.write(cv2.cvtColor(frame_with_detected_blobs, cv2.COLOR_RGB2BGR))
+            #out.write(cv2.cvtColor(frame_with_detected_blobs, cv2.COLOR_RGB2BGR))
 
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):

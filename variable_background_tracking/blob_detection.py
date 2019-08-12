@@ -121,6 +121,7 @@ def detect_blobs_LoG2(foreground_mask, rgb_frame, orig_frame=None, LoGsize=20, p
         orig_with_blobs = cv2.drawKeypoints(orig_frame, keypoints, np.array([]), (0, 0, 255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
     #if you decide to save txt files of keypoint information
+    """
     if(pickle==True):
         index = []
         #get all the needed information from keypoints
@@ -129,6 +130,19 @@ def detect_blobs_LoG2(foreground_mask, rgb_frame, orig_frame=None, LoGsize=20, p
             index.append(temp)
         #set the name of the file that you will be saving to. It is set to one frame per file
         pickleTXT = "hypotheses_txt/frame"+str(frame_number)+".txt"
+        #write info to file
+        with open(pickleTXT, "a+") as txt_file:
+            for line in index:
+                txt_file.write(" ".join(line) + "\n")
+    """
+    if(pickle==True):
+        index = []
+        #get all the needed information from keypoints
+        for point in keypoints:
+            temp = [str((point.pt[0]- (point.size/2), point.pt[1]+ (point.size/2))) ,  str((point.pt[0]+(point.size/2), point.pt[1]-(point.size/2)))]
+            index.append(temp)
+        #set the name of the file that you will be saving to. It is set to one frame per file
+        pickleTXT = "/home/alli/Desktop/StuffToPutinBaboonGoogleDrive/hypotheses_drawing/frame"+str(frame_number)+".txt"
         #write info to file
         with open(pickleTXT, "a+") as txt_file:
             for line in index:
